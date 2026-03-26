@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f0c29"/>
+      <stop offset="100%" stop-color="#302b63"/>
+    </linearGradient>
+    <linearGradient id="face-top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6ee7f7"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="face-left" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="face-right" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#93c5fd"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" fill="url(#bg)"/>
+  <!-- Cube isometric -->
+  <polygon points="200,60 280,105 280,175 200,220 120,175 120,105" fill="none" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+  <!-- Top face -->
+  <polygon points="200,60 280,105 200,150 120,105" fill="url(#face-top)" opacity="0.9"/>
+  <!-- Left face -->
+  <polygon points="120,105 200,150 200,220 120,175" fill="url(#face-left)" opacity="0.9"/>
+  <!-- Right face -->
+  <polygon points="280,105 200,150 200,220 280,175" fill="url(#face-right)" opacity="0.9"/>
+  <!-- Edges -->
+  <polygon points="200,60 280,105 200,150 120,105" fill="none" stroke="#93c5fd" stroke-width="1.5"/>
+  <polygon points="120,105 200,150 200,220 120,175" fill="none" stroke="#93c5fd" stroke-width="1.5"/>
+  <polygon points="280,105 200,150 200,220 280,175" fill="none" stroke="#93c5fd" stroke-width="1.5"/>
+  <!-- Rotation hint arrows -->
+  <path d="M 340 120 A 30 30 0 0 1 310 90" stroke="#6ee7f7" stroke-width="2" fill="none" stroke-dasharray="4,3" opacity="0.7"/>
+  <polygon points="340,120 333,113 347,110" fill="#6ee7f7" opacity="0.7"/>
+</svg>

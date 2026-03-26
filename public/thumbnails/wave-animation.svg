@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#022c22"/>
+      <stop offset="100%" stop-color="#0a0a1a"/>
+    </linearGradient>
+    <linearGradient id="wave-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#34d399" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#059669" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" fill="url(#bg3)"/>
+  <!-- Wave lines -->
+  <path d="M 0 150 Q 50 120 100 150 Q 150 180 200 150 Q 250 120 300 150 Q 350 180 400 150" stroke="url(#wave-grad)" stroke-width="2.5" fill="none" opacity="0.9"/>
+  <path d="M 0 165 Q 50 135 100 165 Q 150 195 200 165 Q 250 135 300 165 Q 350 195 400 165" stroke="#34d399" stroke-width="2" fill="none" opacity="0.6"/>
+  <path d="M 0 135 Q 50 105 100 135 Q 150 165 200 135 Q 250 105 300 135 Q 350 165 400 135" stroke="#10b981" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M 0 120 Q 50 90 100 120 Q 150 150 200 120 Q 250 90 300 120 Q 350 150 400 120" stroke="#6ee7b7" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M 0 180 Q 50 150 100 180 Q 150 210 200 180 Q 250 150 300 180 Q 350 210 400 180" stroke="#34d399" stroke-width="1.5" fill="none" opacity="0.35"/>
+  <!-- Grid lines (perspective) -->
+  <line x1="0" y1="190" x2="400" y2="190" stroke="#10b981" stroke-width="0.5" opacity="0.2"/>
+  <line x1="50" y1="240" x2="200" y2="100" stroke="#10b981" stroke-width="0.5" opacity="0.15"/>
+  <line x1="150" y1="240" x2="250" y2="100" stroke="#10b981" stroke-width="0.5" opacity="0.15"/>
+  <line x1="250" y1="240" x2="300" y2="100" stroke="#10b981" stroke-width="0.5" opacity="0.15"/>
+  <line x1="350" y1="240" x2="350" y2="100" stroke="#10b981" stroke-width="0.5" opacity="0.15"/>
+  <!-- Glow orb -->
+  <circle cx="200" cy="135" r="20" fill="#34d399" opacity="0.08"/>
+  <circle cx="200" cy="135" r="8" fill="#6ee7b7" opacity="0.15"/>
+</svg>
