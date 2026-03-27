@@ -14,8 +14,21 @@ type MicroCMSResponse = {
   contents: MicroCMSSample[];
 };
 
-const apiKey = import.meta.env.MICROCMS_API_KEY;
-const baseUrl = import.meta.env.MICROCMS_BASE_URL;
+type RuntimeEnvLocals = App.Locals & {
+  runtime?: {
+    env?: Record<string, string | undefined>;
+  };
+};
+
+let runtimeEnv: Record<string, string | undefined> | undefined;
+try {
+  runtimeEnv = (Astro.locals as RuntimeEnvLocals)?.runtime?.env;
+} catch {
+  runtimeEnv = undefined;
+}
+
+const apiKey = runtimeEnv?.MICROCMS_API_KEY ?? import.meta.env.MICROCMS_API_KEY;
+const baseUrl = runtimeEnv?.MICROCMS_BASE_URL ?? import.meta.env.MICROCMS_BASE_URL;
 
 const res = await fetch(`${baseUrl}/webglsamples`, {
   headers: { "X-MICROCMS-API-KEY": apiKey },
