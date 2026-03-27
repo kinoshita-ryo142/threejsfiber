@@ -1,11 +1,12 @@
 import { useRef, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 const COUNT = 3000;
 
 function Particles() {
   const pointsRef = useRef<THREE.Points>(null!);
+  const { pointer } = useThree();
 
   const geometry = useMemo(() => {
     const geo = new THREE.BufferGeometry();
@@ -27,7 +28,8 @@ function Particles() {
   }, []);
 
   useFrame((_state, delta) => {
-    pointsRef.current.rotation.y += delta * 0.05;
+    const targetRotationY = pointer.x * Math.PI;
+    pointsRef.current.rotation.y += (targetRotationY - pointsRef.current.rotation.y) * 0.05;
     pointsRef.current.rotation.x += delta * 0.02;
   });
 
