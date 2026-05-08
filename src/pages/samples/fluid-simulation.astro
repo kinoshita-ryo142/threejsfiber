@@ -1,0 +1,26 @@
+---
+import "../../styles/global.css";
+import FluidSimulationScene from "../../components/three/FluidSimulation";
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <title>流体シミュレーション | Three.js サンプル集</title>
+  </head>
+  <body class="min-h-screen flex flex-col bg-[#020409] text-slate-100">
+    <header class="flex items-center gap-4 border-b border-white/10 bg-black/20 px-6 py-4 backdrop-blur-sm">
+      <a href="/" class="text-sm text-slate-400 transition-colors hover:text-slate-100">
+        ← サンプル一覧へ
+      </a>
+      <h1 class="text-lg font-semibold text-slate-50">流体シミュレーション</h1>
+    </header>
+    <main class="flex-1">
+      <div class="w-full h-[calc(100vh-62px)]">
+        <FluidSimulationScene client:only="react" />
+      </div>
+    </main>
+  </body>
+</html>

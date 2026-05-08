@@ -128,3 +128,12 @@
     @apply font-sans;
     }
 }
+
+.roll-pages-html-wrapper,
+.roll-pages-html-wrapper > div,
+.roll-pages-html-wrapper > div > div,
+.roll-pages-html-content {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}

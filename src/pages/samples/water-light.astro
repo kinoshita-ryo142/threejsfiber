@@ -1,0 +1,27 @@
+---
+import "../../styles/global.css";
+import WaterLightScene from "../../components/three/WaterLight";
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <title>水面表現 | Three.js サンプル集</title>
+  </head>
+  <body class="bg-background text-foreground min-h-screen flex flex-col">
+    <header class="border-b px-6 py-4 flex items-center gap-4">
+      <a href="/" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+        ← サンプル一覧へ
+      </a>
+      <h1 class="text-lg font-semibold">水面表現</h1>
+    </header>
+    <main class="flex-1">
+      <div class="w-full h-[calc(100vh-57px)]">
+        <WaterLightScene client:only="react" />
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-serif font-bold text-white tracking-widest">穏やかな水面の表現</div>
+      </div>
+    </main>
+  </body>
+</html>
