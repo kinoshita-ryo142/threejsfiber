@@ -39,10 +39,10 @@ const waterLightFragmentShader = /* glsl */ `
     float value = 0.0;
     float amplitude = 0.5;
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 4; i++) {
       value += amplitude * noise(p);
       p = p * 2.02 + vec2(4.1, 2.7);
-      amplitude *= 0.52;
+      amplitude *= 0.5;
     }
 
     return value;
@@ -74,66 +74,68 @@ const waterLightFragmentShader = /* glsl */ `
     return max(secondNearest - nearest, 0.0);
   }
 
-  float causticLayer(vec2 uv, float scale, float speed, float thickness) {
+  // 線の太さに動的な強弱（幅のバリエーション）を付与するレイヤー
+  float causticLayer(vec2 uv, float scale, float speed) {
     vec2 flow = uv * scale;
-    float warpA = fbm(flow * 0.55 + vec2(speed * 0.35, -speed * 0.22));
-    float warpB = fbm(flow * 0.9 + vec2(-speed * 0.18, speed * 0.27));
+    
+    // 位置に応じた太さゆらぎ用パラメータ（軽量ノイズ）
+    float n = noise(flow * 0.7 + vec2(speed * 0.2, -speed * 0.15));
 
-    flow += vec2(warpA, warpB) * 1.15;
+    float warpA = fbm(flow * 0.5 + vec2(speed * 0.3, -speed * 0.2));
+    float warpB = fbm(flow * 0.8 + vec2(-speed * 0.15, speed * 0.25));
+
+    flow += vec2(warpA, warpB) * 1.1;
     flow += vec2(
-      sin(flow.y * 0.85 + speed * 0.8),
-      cos(flow.x * 0.72 - speed * 0.65)
-    ) * 0.22;
+      sin(flow.y * 0.8 + speed * 0.75),
+      cos(flow.x * 0.7 - speed * 0.6)
+    ) * 0.25;
 
     float edge = voronoiEdge(flow);
-    float sharp = 1.0 - smoothstep(0.0, thickness, edge);
-    float soft = 1.0 - smoothstep(0.0, thickness * 3.8, edge);
 
-    return sharp * 0.95 + soft * 0.35;
+    // ★ 線の太さを 0.005（鋭く極細）〜 0.045（太く広い集光）の間で動的に変化
+    float dynamicThickness = mix(0.005, 0.045, n * 0.5 + 0.5);
+    
+    // 集光線の方程式：太い部分は面のように明るく、細い部分は鋭いラインに
+    float focus = dynamicThickness / (edge + dynamicThickness * 0.55);
+    return clamp(focus - 0.06, 0.0, 2.8);
   }
 
   void main() {
     vec2 uv = vUv - 0.5;
     float aspect = uResolution.x / max(uResolution.y, 1.0);
     vec2 sceneUv = vec2(uv.x * aspect, uv.y);
-    float time = uTime * 0.27;
+    float time = uTime * 0.22;
 
     vec2 drift = vec2(
-      fbm(sceneUv * 1.35 + vec2(time * 0.55, -time * 0.3)),
-      fbm(sceneUv * 1.55 + vec2(-time * 0.28, time * 0.42))
+      fbm(sceneUv * 1.2 + vec2(time * 0.45, -time * 0.25)),
+      fbm(sceneUv * 1.4 + vec2(-time * 0.22, time * 0.35))
     );
 
-    vec2 warpedUv = sceneUv + (drift - 0.5) * 0.5;
+    vec2 warpedUv = sceneUv + (drift - 0.5) * 0.35;
 
-    float layerA = causticLayer(warpedUv + vec2(0.0, time * 0.06), 2.35, time, 0.21);
-    float layerB = causticLayer(warpedUv * 1.04 + vec2(-time * 0.04, time * 0.03), 3.7, time * 1.1, 0.155);
-    float layerC = causticLayer(warpedUv * 1.14 + vec2(time * 0.025, -time * 0.04), 5.7, time * 1.35, 0.115);
+    // 大小2つのスケールを重ね合わせることで交点と太さの重なりを表現
+    float layerA = causticLayer(warpedUv + vec2(0.0, time * 0.05), 2.2, time);
+    float layerB = causticLayer(warpedUv * 1.3 + vec2(-time * 0.03, time * 0.02), 3.8, time * 1.1);
 
-    float envelopeA = smoothstep(0.14, 0.72, fbm(warpedUv * 0.95 + vec2(time * 0.16, -time * 0.11)) + 0.62);
-    float envelopeB = smoothstep(0.22, 0.82, fbm(warpedUv * 0.55 - vec2(time * 0.08, time * 0.06)) + 0.68);
-    float coverage = mix(0.45, 1.0, clamp(envelopeA * 0.58 + envelopeB * 0.42, 0.0, 1.0));
+    float caustics = layerA * 0.65 + layerB * 0.35;
 
-    float caustics = (layerA * 0.7 + layerB * 0.42 + layerC * 0.22) * coverage;
-    float breakupA = smoothstep(0.34, 0.72, fbm(warpedUv * 3.8 + vec2(time * 0.42, -time * 0.31)) + 0.58);
-    float breakupB = 1.0 - smoothstep(0.18, 0.46, fbm(warpedUv * 7.2 - vec2(time * 0.67, time * 0.24)) + 0.5);
-    float breakup = mix(0.72, 1.0, breakupA * breakupB);
+    // 画像のような明るく澄んだ南国系プール（ターコイズ/シアン）のベースカラー
+    vec3 shallowTurquoise = vec3(0.42, 0.88, 0.91);
+    vec3 deepCyan = vec3(0.18, 0.62, 0.72);
+    
+    float depth = smoothstep(-0.6, 0.6, vUv.y);
+    vec3 color = mix(deepCyan, shallowTurquoise, depth);
 
-    caustics *= breakup;
-    caustics = max(caustics - 0.17, 0.0) * 1.12;
+    // 光線ハイライト（太い部分は広範に光り、交点は眩しく白飛びする）
+    vec3 causticLight = vec3(0.85, 0.98, 1.0);
+    vec3 intenseSun = vec3(1.0, 1.0, 0.95);
 
-    float softBloom = smoothstep(0.035, 0.36, caustics);
-    float sharpHighlights = pow(max(caustics, 0.0), 2.55);
+    color += caustics * causticLight * 0.38;
+    color += pow(max(caustics - 0.3, 0.0), 2.8) * intenseSun * 0.5;
 
-    float vignette = smoothstep(1.15, 0.24, length(sceneUv * vec2(0.9, 1.1)));
-    float depth = smoothstep(-0.45, 0.55, vUv.y);
-
-    vec3 baseColor = vec3(0.0, 0.070, 0.125);
-    vec3 depthTint = vec3(0.0, 0.095, 0.155);
-    vec3 color = mix(baseColor, depthTint, depth * 0.35);
-
-    color += vec3(0.72, 0.82, 0.92) * softBloom * 0.11;
-    color += vec3(1.0) * sharpHighlights * 0.28;
-    color *= mix(0.72, 1.0, vignette);
+    // 画面外縁のわずかな明るさの調整
+    float vignette = smoothstep(1.3, 0.4, length(sceneUv * vec2(0.8, 1.0)));
+    color *= mix(0.85, 1.0, vignette);
 
     gl_FragColor = vec4(color, 1.0);
   }
@@ -141,41 +143,35 @@ const waterLightFragmentShader = /* glsl */ `
 
 function WaterLightPlane() {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
-  const { size, viewport } = useThree();
+  const viewport = useThree((state) => state.viewport);
 
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
-      uResolution: { value: new THREE.Vector2(size.width, size.height) },
+      uResolution: { value: new THREE.Vector2() },
     }),
-    [size.height, size.width]
+    []
   );
 
-  useFrame(({ clock }) => {
+  useFrame((state, delta) => {
     const material = materialRef.current;
-    if (!material) {
-      return;
-    }
+    if (!material) return;
 
-    material.uniforms.uTime.value = clock.elapsedTime;
-    material.uniforms.uResolution.value.set(size.width, size.height);
+    material.uniforms.uTime.value += delta;
+    material.uniforms.uResolution.value.set(state.size.width, state.size.height);
   });
 
   return (
-    <mesh frustumCulled={false} position={[0, 0, 0]} scale={[viewport.width, viewport.height, 1]}>
-      <planeGeometry args={[1, 1, 1, 1]} />
+    <mesh frustumCulled={false} scale={[viewport.width, viewport.height, 1]}>
+      <planeGeometry />
       <shaderMaterial
         ref={materialRef}
-        args={[
-          {
-            uniforms,
-            vertexShader: waterLightVertexShader,
-            fragmentShader: waterLightFragmentShader,
-            depthTest: false,
-            depthWrite: false,
-            toneMapped: false,
-          },
-        ]}
+        uniforms={uniforms}
+        vertexShader={waterLightVertexShader}
+        fragmentShader={waterLightFragmentShader}
+        depthTest={false}
+        depthWrite={false}
+        toneMapped={false}
       />
     </mesh>
   );
@@ -187,9 +183,9 @@ export default function WaterLightScene() {
       orthographic
       camera={{ position: [0, 0, 1], zoom: 1, near: 0.1, far: 10 }}
       dpr={[1, 2]}
-      gl={{ antialias: true, alpha: false }}
+      gl={{ antialias: false, alpha: false }}
     >
-      <color attach="background" args={["#001220"]} />
+      <color attach="background" args={["#2BA8B8"]} />
       <WaterLightPlane />
     </Canvas>
   );

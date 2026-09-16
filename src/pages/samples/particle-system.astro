@@ -7,7 +7,7 @@ import ParticleSystemScene from "../../components/three/ParticleSystem";
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>パーティクルシステム | Three.js サンプル集</title>
   </head>
   <body class="min-h-screen flex flex-col bg-[#020409] text-slate-100">
@@ -19,7 +19,9 @@ import ParticleSystemScene from "../../components/three/ParticleSystem";
     </header>
     <main class="flex-1">
       <div class="h-[calc(100vh-57px)] w-full bg-cover bg-center bg-no-repeat bg-[url('/images/sample_pic.jpg')] relative">
-        <h2 class="text-3xl lg:text-6xl font-bold font-sans absolute top-1/2 transform -translate-y-1/2 left-8 lg:left-14 leading-10 lg:leading-20 tracking-wider z-99">選ばれる“理由”がある<br>Web制作へ。</h2>
+        <h2 class="text-3xl lg:text-6xl font-bold font-sans absolute top-1/2 -translate-y-1/2 left-8 lg:left-14 leading-10 lg:leading-20 tracking-wider z-10 pointer-events-none">
+          選ばれる“理由”がある<br />Web制作へ。
+        </h2>
         <ParticleSystemScene client:only="react" />
       </div>
     </main>

@@ -2,11 +2,12 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
-
 import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
+  output: "server",
+  adapter: cloudflare(),
   integrations: [react()],
 
   vite: {
@@ -17,11 +18,7 @@ export default defineConfig({
         "@react-three/fiber",
         "@react-three/drei",
       ],
-    },
-    ssr: {
-      noExternal: ["three", "@react-three/fiber", "@react-three/drei"],
-    },
+      exclude: ["astro:toolbar:internal"],
+    }
   },
-
-  adapter: cloudflare(),
 });
